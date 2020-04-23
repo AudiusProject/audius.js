@@ -1,0 +1,63 @@
+{
+  "name": "blueberry",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
+  },
+  "scripts": {
+    "test": "cross-env CI=1 react-scripts-ts test --env=jsdom",
+    "test:watch": "react-scripts-ts test --env=jsdom",
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "docs": "typedoc",
+    "lint": "./node_modules/.bin/eslint '**/*.ts*'",
+    "lint-fix": "./node_modules/.bin/eslint '**/*.ts*' --fix"
+  },
+  "dependencies": {
+    "@audius/libs": "^0.11.76",
+    "hls.js": "^0.13.2"
+  },
+  "peerDependencies": {
+    "prop-types": "^15.7.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^4.0.3",
+    "@types/hls.js": "^0.12.6",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "babel-runtime": "^6.26.0",
+    "cross-env": "^5.2.1",
+    "eslint": "^6.3.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^22.16.0",
+    "eslint-plugin-node": "^9.2.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "jest": "^24.9.0",
+    "rollup": "^2.6.1",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.24.0",
+    "rollup-plugin-url": "^2.2.2",
+    "ts-jest": "^22.4.2",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
+    "typedoc": "^0.17.4",
+    "typescript": "^3.6.2"
+  },
+  "files": [
+    "dist"
+  ]
+}
