@@ -5,7 +5,7 @@
  */
 
 import AudiusLibs from '@audius/libs'
-import { EventEmitter } from 'events'
+import EventEmitter from 'eventemitter3'
 
 // Configuration
 const TOKEN_ADDRESS = 0xADEf65C0f6a30Dcb5f88Eb8653BBFe09Bf99864f

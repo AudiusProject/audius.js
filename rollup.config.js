@@ -25,6 +25,7 @@ export default {
     //   sourcemap: true
     // }
   ],
+  external: ['@audius/libs'],
   plugins: [
     external(),
     url(),
