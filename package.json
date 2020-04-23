@@ -1,8 +1,8 @@
 {
-  "name": "blueberry",
-  "version": "1.0.0",
-  "description": "",
-  "author": "",
+  "name": "audius.js",
+  "version": "0.0.1",
+  "description": "Audius.js presents a simple, consumable API for interacting with core Audius functionality.",
+  "author": "Audius Inc",
   "license": "ISC",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
