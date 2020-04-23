@@ -51,23 +51,11 @@ init()
  * Wait for libs to finish initializing
  * before resolving
  */
-const awaitInit = async () => {
+export const awaitInit = async () => {
   return new Promise(resolve => {
     if (hasInitialized) resolve()
     ee.on(INITIALIZED, resolve)
   })
-}
-
-/**
- * Provider for libs methods.
- * Ensures that libs is connected before
- * invoking `callback`
- */
-export const provide = async (
-  callback: (...args: any) => void
-) => async () => {
-  await awaitInit()
-  return callback
 }
 
 export default libs
