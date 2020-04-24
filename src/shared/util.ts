@@ -3,7 +3,8 @@
  * @packageDocumentation
  * @ignore
  */
-import { TrackSegment } from 'types/track'
+
+import { TrackSegment } from 'shared/types/track'
 
 const FORMAT = `#EXTM3U`
 const VERSION = `#EXT-X-VERSION:3`
@@ -17,7 +18,7 @@ const TARGET_DURATION_VALUE = 6
 
 /**
  * Generates an M3U8 manifest file
- * @param segments an array of segments with urls 
+ * @param segments an array of segments with urls
  * @param ipfs gateway to retrieve segments from
  * @param prefetchedSegments optional segments that have local blob-like URLs for faster fetching.
  */
@@ -62,7 +63,7 @@ export const generateM3U8 = (
 
 /**
  * Generates a master m3u8 file containing m3u8 variants for each of the provided gateways
- * @param segments an array of segments with urls 
+ * @param segments an array of segments with urls
  * @param gateways list of ipfs gateways, e.g. https://ipfs.io/ipfs/
  * @param prefetchedSegments optional segments that have local blob-like URLs for faster fetching.
  */

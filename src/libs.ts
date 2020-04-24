@@ -1,26 +1,18 @@
-/**
- * Exposes an opinionated AudiusLibs
- * @packageDocumentation
- * @ignore
- */
-
 import AudiusLibs from '@audius/libs'
-import EventEmitter from 'eventemitter3'
 
 // Configuration
-const TOKEN_ADDRESS = 0xADEf65C0f6a30Dcb5f88Eb8653BBFe09Bf99864f
-const ETH_REGISTRY_ADDRESS = 0xb2be26Ca062c5D74964921B80DE6cfa28D9A36c0
-const ETH_PROVIDER_URL = 'https://mainnet.infura.io/v3/c569c6faf4f14d15a49d0044e7ddd668'
-const ETH_OWNER_WALLET = 0xe886a1858d2d368ef8f02c65bdd470396a1ab188
+const TOKEN_ADDRESS = "0xADEf65C0f6a30Dcb5f88Eb8653BBFe09Bf99864f"
+const ETH_REGISTRY_ADDRESS = "0xb2be26Ca062c5D74964921B80DE6cfa28D9A36c0"
+const ETH_PROVIDER_URL = 'https://eth-mainnet.alchemyapi.io/jsonrpc/iSnek4T02BFCUEkcPGKo0eEY1aWLJgxF'
+const ETH_OWNER_WALLET = "0xe886a1858d2d368ef8f02c65bdd470396a1ab188"
 
-const INITIALIZED = 'INITIALIZED'
+const DISCOVERY_PROVIDER_WHITELIST = new Set([
+  "https://discoveryprovider.audius.co",
+  "https://discoveryprovider2.audius.co",
+  "https://discoveryprovider3.audius.co"
+])
 
-/**
- * Singleton wrapper for Audius Libs.
- * Currently only supports read operations.
- * Initialized on start-up.
- */
-const libs = new AudiusLibs({
+export const libsConfig = {
   ethWeb3Config: AudiusLibs.configEthWeb3(
     TOKEN_ADDRESS,
     ETH_REGISTRY_ADDRESS,
@@ -28,34 +20,8 @@ const libs = new AudiusLibs({
     ETH_OWNER_WALLET
   ),
   discoveryProviderConfig: AudiusLibs.configDiscoveryProvider(
-    true
-  )
-})
-
-const ee = new EventEmitter()
-
-let hasInitialized = false
-
-/**
- * Initialize audius service libs
- */
-const init = async () => {
-  await libs.init()
-  ee.emit(INITIALIZED)
-  hasInitialized = true
+    false,
+    new Set(DISCOVERY_PROVIDER_WHITELIST)
+  ),
+  isServer: true,
 }
-// Initialize immediately on start
-init()
-
-/**
- * Wait for libs to finish initializing
- * before resolving
- */
-export const awaitInit = async () => {
-  return new Promise(resolve => {
-    if (hasInitialized) resolve()
-    ee.on(INITIALIZED, resolve)
-  })
-}
-
-export default libs
