@@ -12,6 +12,8 @@ const DISCOVERY_PROVIDER_WHITELIST = new Set([
   "https://discoveryprovider3.audius.co"
 ])
 
+const IDENTITY_SERVICE = "https://identityservice.audius.co"
+
 export const libsConfig = {
   ethWeb3Config: AudiusLibs.configEthWeb3(
     TOKEN_ADDRESS,
@@ -23,5 +25,6 @@ export const libsConfig = {
     false,
     new Set(DISCOVERY_PROVIDER_WHITELIST)
   ),
+  identityServiceConfig: AudiusLibs.configIdentityService(IDENTITY_SERVICE),
   isServer: true,
 }

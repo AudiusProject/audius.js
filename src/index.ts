@@ -6,7 +6,7 @@ import AudiusLibs from '@audius/libs'
 import { libsConfig } from 'libs'
 import EventEmitter from 'eventemitter3'
 import btoa from 'btoa'
-import { generateM3U8 } from 'shared/util'
+import { generateM3U8, uuid } from 'shared/util'
 // import { generateM3U8Variants } from 'shared/util'
 
 const LIBS_INIT = 'INITIALIZED'
@@ -52,10 +52,25 @@ class Audius {
 
       const gateways = user.creator_node_endpoint.split(',').map(e => `${e}/ipfs/`)
       const m3u8 = generateM3U8(track.track_segments, [], gateways[0])
+
+      if (this.recordPlays) {
+        this.recordListen(trackId)
+      }
+
       return this.encodeDataURI(m3u8)
     } catch (err) {
       console.log(`Error getting track: ${err.message}`)
       throw err
+    }
+  }
+
+  private async recordListen(trackId: ID) {
+    console.debug(`Recording listen for trackId: ${trackId}`)
+    await this.awaitLibsInit()
+    try {
+      this.libs.Track.logTrackListen(trackId, uuid())
+    } catch (err) {
+      console.warn(`Got err recording listen for track ID ${trackId}: [${err.message}]`)
     }
   }
 

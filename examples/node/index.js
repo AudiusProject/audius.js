@@ -9,7 +9,7 @@ client.once('ready', () => {
   console.log('Bot is ready and logged in!')
 })
 
-const audius = new Audius()
+const audius = new Audius({ recordPlays: true })
 client.on('message', async message => {
   if (message.author.bot) return
   if (!message.content.startsWith("~")) return
