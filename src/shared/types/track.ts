@@ -46,4 +46,6 @@ Timestamped & {
   cover_art: string
   is_unlisted: boolean
   field_visibility?: FieldVisibility
+  route_id: string
+  track_id: number
 }

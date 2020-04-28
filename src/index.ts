@@ -7,9 +7,22 @@ import { libsConfig } from 'libs'
 import EventEmitter from 'eventemitter3'
 import btoa from 'btoa'
 import { generateM3U8, uuid } from 'shared/util'
-// import { generateM3U8Variants } from 'shared/util'
+import { Track } from 'shared/types/track'
 
 const LIBS_INIT = 'INITIALIZED'
+
+type TrackMetadata = {
+  description: string,
+  genre: string
+  mood: string,
+  ownerId: number,
+  path: string
+  trackId: number
+  tags: string[]
+  repostCount: number
+  favoriteCount: number
+  releaseDate: Date
+}
 
 type AudiusConfig = {
   recordPlays: boolean,
@@ -59,7 +72,38 @@ class Audius {
 
       return this.encodeDataURI(m3u8)
     } catch (err) {
-      console.log(`Error getting track: ${err.message}`)
+      console.log(`Error getting track ID ${trackId}: ${err.message}`)
+      throw err
+    }
+  }
+
+  async getTrackMetadata(trackId: ID): Promise<TrackMetadata> {
+    console.debug(`Getting track metadata for track ID: ${trackId}`)
+    await this.awaitLibsInit()
+    try {
+      const tracks: Track[] = await this.libs.Track.getTracks(
+        1, // Limit,
+        0, // Ofset,
+        [trackId],
+      )
+
+      const track = tracks[0]
+      if (!track) throw new Error(`No track found for ID ${trackId}`)
+
+      return {
+        description: track.description || "",
+        genre: track.genre,
+        mood: track.mood,
+        ownerId: track.owner_id,
+        path: track.route_id,
+        trackId: track.track_id,
+        tags: track.tags ? track.tags.split(',') : [],
+        repostCount: track.repost_count,
+        favoriteCount: track.save_count,
+        releaseDate: new Date(track.release_date)
+      }
+    } catch (err) {
+      console.log(`Error getting metadata for track ID ${trackId}: ${err.msg}`)
       throw err
     }
   }
