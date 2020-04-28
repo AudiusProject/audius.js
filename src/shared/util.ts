@@ -5,6 +5,7 @@
  */
 
 import { TrackSegment } from 'shared/types/track'
+import btoa from 'btoa'
 
 const FORMAT = `#EXTM3U`
 const VERSION = `#EXT-X-VERSION:3`
@@ -57,7 +58,6 @@ export const generateM3U8 = (
   )
 
   lines.push(ENDLIST)
-
   return lines.join('\n')
 }
 
@@ -78,7 +78,8 @@ export const generateM3U8Variants = (
       prefetchedSegments,
       gateway
     )
-    return encodeURI(`data:application/vnd.apple.mpegURL;base64,${window.btoa(variant)}`)
+    // return variant
+    return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(variant)}`)
   })
 
   const lines = [
@@ -95,5 +96,6 @@ export const generateM3U8Variants = (
   // If there is native support for HLS (OSX Safari and iOS Safari), pass a data URI.
   // NOTE: Safari requires a resource URL to have an extension, so passing a createObjectURL for a blob
   // will not work.
-  return encodeURI(`data:application/vnd.apple.mpegURL;base64,${window.btoa(m3u8)}`)
+  return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(m3u8)}`)
+  // return m3u8
 }

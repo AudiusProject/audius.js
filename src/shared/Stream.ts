@@ -2,7 +2,7 @@
 import { generateM3U8, generateM3U8Variants } from './util'
 import libs from '../libs'
 import Hls from 'hls.js'
-import { TrackSegment } from 'types/track'
+import { TrackSegment } from 'shared/types/track'
 
 const FADE_IN_EVENT = new Event('fade-in')
 const FADE_OUT_EVENT = new Event('fade-out')

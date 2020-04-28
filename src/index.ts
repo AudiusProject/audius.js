@@ -5,7 +5,9 @@ import * as users from './users'
 import AudiusLibs from '@audius/libs'
 import { libsConfig } from 'libs'
 import EventEmitter from 'eventemitter3'
-import { generateM3U8Variants } from 'shared/util'
+import btoa from 'btoa'
+import { generateM3U8 } from 'shared/util'
+// import { generateM3U8Variants } from 'shared/util'
 
 const LIBS_INIT = 'INITIALIZED'
 
@@ -27,9 +29,7 @@ class Audius {
     this.libsInitted = false
     this.libsEventEmitter = new EventEmitter<string>()
     this.recordPlays = recordPlays
-
-    // TODO: remove me
-    console.log({recordPlays: this.recordPlays})
+    console.log(this.recordPlays)
 
     this.libs.init().then(() => {
       this.libsInitted = true
@@ -41,6 +41,7 @@ class Audius {
   }
 
   async getTrackManifest(trackId: ID) {
+    console.debug(`Getting manifest for track ID ${trackId}`)
     await this.awaitLibsInit()
     try {
       const track = await tracks.get(this.libs, trackId)
@@ -48,9 +49,10 @@ class Audius {
 
       const user = await users.get(this.libs, track.owner_id)
       if (!user) throw new Error(`No user for ID: ${track.owner_id}`)
-      const gateways = user.creator_node_endpoint.split(',')
-      const variants = generateM3U8Variants(track.track_segments, [], gateways)
-      return variants
+
+      const gateways = user.creator_node_endpoint.split(',').map(e => `${e}/ipfs/`)
+      const m3u8 = generateM3U8(track.track_segments, [], gateways[0])
+      return this.encodeDataURI(m3u8)
     } catch (err) {
       console.log(`Error getting track: ${err.message}`)
       throw err
@@ -62,6 +64,10 @@ class Audius {
       if (this.libsInitted) resolve()
       this.libsEventEmitter.on(LIBS_INIT, resolve)
     })
+  }
+
+  private encodeDataURI(manifest: string) {
+    return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(manifest)}`)
   }
 }
 

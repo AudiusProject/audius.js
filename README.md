@@ -32,3 +32,7 @@ npm run build
 ```
 npm run docs
 ```
+
+# Usage with Discord
+TODO
+- Be sure to install peer dependncies of discord.js: ffmpeg-static, @discordjs/opus

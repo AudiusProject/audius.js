@@ -2,4 +2,4 @@
  * @packageDocumentation
  * @ignore
  */
-export { default } from './Stream'
+export { default } from '../shared/Stream'
