@@ -1,25 +1,17 @@
-import libs, { provide } from '../libs'
-import { TrackID, Track } from '../types/track'
+import { TrackID, Track } from '../shared/types/track'
 
-/**
- * Retrieves a track from the Audius protocol.
- * 
- * ```
- *  const track = await get(2101)
- *  console.log(track.title)
- * ```
- * 
- * @param id the id of the track
- */
-const get = provide(
-  async (id: TrackID) => {
-    const track: Track = await libs.discoveryProvider.getTracks(
-      1,
-      0,
-      [id]
-    )
-    return track
-  }
-)
+const get = async (libs: any, id: TrackID): Promise<Track | undefined> => {
+  const tracks: Track[] = await libs.discoveryProvider.getTracks(
+    1, // Limit,
+    0, // Ofset,
+    [id], // idsArray
+    null, // targetUserId
+    null, // sort
+    null, // minBlockNumber
+    null, // filterDeleted
+    true // withUsers
+  )
+  return tracks[0]
+}
 
 export default get
