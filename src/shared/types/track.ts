@@ -1,4 +1,5 @@
 import { ID, CID, OnChain, Timestamped } from './common'
+import User from './user'
 
 export type TrackID = ID
 
@@ -48,4 +49,5 @@ Timestamped & {
   field_visibility?: FieldVisibility
   route_id: string
   track_id: number
+  user: User
 }

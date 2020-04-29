@@ -16,13 +16,7 @@ export default {
       file: pkg.main,
       format: 'cjs',
       sourcemap: true,
-    },
-    // {
-    //   file: pkg.module,
-    //   format: 'es',
-    //   exports: 'named',
-    //   sourcemap: true
-    // }
+    }
   ],
   globals: { 'btoa': 'btoa' },
   external: ['@audius/libs', 'analytics-node', 'btoa'],
@@ -35,8 +29,7 @@ export default {
       clean: true,
       typescript
     }),
-    resolve({ browser: false }),
+    resolve(),
     commonjs(),
-    // nodePolyfills(),
   ]
 }

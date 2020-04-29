@@ -16,13 +16,6 @@ import { generateM3U8, uuid } from 'shared/util'
 import { Track } from 'shared/types/track'
 import { recordPlayEvent, recordListenEvent, identify } from 'analytics'
 
-// btoa is required as a global
-// for Axios to work properly, due to
-// XMLHttpRequest exported from web3
-// causing axios to think we're in a browser environment.
-// @ts-ignore
-global.btoa = btoa
-
 /**
  * @hidden
  */
@@ -87,7 +80,7 @@ class Audius {
       this.libsInitted = true
       this.libsEventEmitter.emit(LIBS_INIT)
     }).catch((err: Error) => {
-      console.warn(`Got err initializing libs: [${err}]`)
+      console.warn(`Got error initializing libs: [${err.message}]`)
       throw new Error(err.message)
     })
   }
@@ -136,16 +129,11 @@ class Audius {
     console.debug(`Getting track metadata for track ID: ${trackId}`)
     await this.awaitLibsInit()
     try {
-      const tracks: Track[] = await this.libs.Track.getTracks(
-        1, // Limit,
-        0, // Ofset,
-        [trackId],
-      )
-
-      const track = tracks[0]
+      const track: Track = await tracks.get(this.libs, trackId)
       if (!track) throw new Error(`No track found for ID ${trackId}`)
 
       return {
+        title: track.title,
         description: track.description || "",
         genre: track.genre,
         mood: track.mood,
@@ -155,7 +143,9 @@ class Audius {
         tags: track.tags ? track.tags.split(',') : [],
         repostCount: track.repost_count,
         favoriteCount: track.save_count,
-        releaseDate: new Date(track.release_date)
+        releaseDate: new Date(track.release_date),
+        userName: track.user.name,
+        userHandle: track.user.handle
       }
     } catch (err) {
       console.log(`Error getting metadata for track ID ${trackId}: ${err.msg}`)
@@ -184,5 +174,13 @@ class Audius {
     return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(manifest)}`)
   }
 }
+
+// Minor hack alert:
+// `btoa` is required as a global
+// for `Axios` to work properly, due to
+// `XMLHttpRequest exported from web3
+// causing axios to think we're in a browser environment.
+// @ts-ignore
+global.btoa = btoa
 
 export default Audius

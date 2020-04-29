@@ -1,7 +1,7 @@
 {
   "name": "audius.js",
   "version": "0.0.1",
-  "description": "Audius.js presents a simple, consumable API for interacting with core Audius functionality.",
+  "description": "Audius.js presents a simple, consumable API for interacting with the Audius network.",
   "author": "Audius Inc",
   "license": "ISC",
   "main": "dist/index.js",
@@ -58,7 +58,6 @@
     "rollup": "^2.6.1",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
     "rollup-plugin-typescript2": "^0.24.0",

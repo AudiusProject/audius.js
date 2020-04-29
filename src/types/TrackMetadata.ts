@@ -3,6 +3,10 @@
  */
 type TrackMetadata = {
   /**
+   * The title of the track.
+   */
+  title: string
+  /**
    *  The description of the track. May be an empty string.
    */
   description: string,
@@ -53,6 +57,16 @@ type TrackMetadata = {
    * released on the Audius network.
    */
   releaseDate: Date
+
+  /**
+   * The name of the uploading user.
+   */
+  userName: string
+
+  /**
+   * The handle of the uploading user.
+   */
+  userHandle: string
 }
 
 export default TrackMetadata
