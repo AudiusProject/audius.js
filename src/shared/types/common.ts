@@ -15,5 +15,5 @@ export type Timestamped = {
 
 export type PlaylistID = ID
 export type Playlist = {
-  
+
 }

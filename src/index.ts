@@ -55,7 +55,7 @@ class Audius {
    * Constructs a new instance of an Audius client.
    * @param configuration options
    */
-  constructor({
+  constructor ({
     analyticsId
   }: AudiusConfig) {
     this.libs = new AudiusLibs(libsConfig)
@@ -83,7 +83,7 @@ class Audius {
    *
    * @param trackId
    */
-  async getAudioStreamURL(trackId: ID) {
+  async getAudioStreamURL (trackId: ID) {
     console.debug(`Getting manifest for track ID ${trackId}`)
 
     await this.awaitLibsInit()
@@ -111,7 +111,7 @@ class Audius {
    *
    * @param trackId
    */
-  async getTrackMetadata(trackId: ID): Promise<TrackMetadata> {
+  async getTrackMetadata (trackId: ID): Promise<TrackMetadata> {
     console.debug(`Getting track metadata for track ID: ${trackId}`)
     await this.awaitLibsInit()
     try {
@@ -120,7 +120,7 @@ class Audius {
 
       return {
         title: track.title,
-        description: track.description || "",
+        description: track.description || '',
         genre: track.genre,
         mood: track.mood,
         ownerId: track.owner_id,
@@ -139,7 +139,7 @@ class Audius {
     }
   }
 
-  private async recordListen(trackId: ID) {
+  private async recordListen (trackId: ID) {
     console.debug(`Recording listen for trackId: ${trackId}`)
     await this.awaitLibsInit()
     try {
@@ -149,14 +149,14 @@ class Audius {
     }
   }
 
-  private async awaitLibsInit() {
+  private async awaitLibsInit () {
     return new Promise((resolve) => {
       if (this.libsInitted) resolve()
       this.libsEventEmitter.on(LIBS_INIT, resolve)
     })
   }
 
-  private encodeDataURI(manifest: string) {
+  private encodeDataURI (manifest: string) {
     return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(manifest)}`)
   }
 }

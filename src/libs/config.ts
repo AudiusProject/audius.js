@@ -1,15 +1,15 @@
 import AudiusLibs from '@audius/libs'
 
-const TOKEN_ADDRESS = "0xADEf65C0f6a30Dcb5f88Eb8653BBFe09Bf99864f"
-const ETH_REGISTRY_ADDRESS = "0xb2be26Ca062c5D74964921B80DE6cfa28D9A36c0"
+const TOKEN_ADDRESS = '0xADEf65C0f6a30Dcb5f88Eb8653BBFe09Bf99864f'
+const ETH_REGISTRY_ADDRESS = '0xb2be26Ca062c5D74964921B80DE6cfa28D9A36c0'
 const ETH_PROVIDER_URL = 'https://mainnet.infura.io/v3/c569c6faf4f14d15a49d0044e7ddd668'
-const ETH_OWNER_WALLET = "0xe886a1858d2d368ef8f02c65bdd470396a1ab188"
-const IDENTITY_SERVICE = "https://identityservice.audius.co"
+const ETH_OWNER_WALLET = '0xe886a1858d2d368ef8f02c65bdd470396a1ab188'
+const IDENTITY_SERVICE = 'https://identityservice.audius.co'
 
 const DISCOVERY_PROVIDER_WHITELIST = new Set([
-  "https://discoveryprovider.audius.co",
-  "https://discoveryprovider2.audius.co",
-  "https://discoveryprovider3.audius.co"
+  'https://discoveryprovider.audius.co',
+  'https://discoveryprovider2.audius.co',
+  'https://discoveryprovider3.audius.co'
 ])
 
 const libsConfig = {
@@ -24,7 +24,7 @@ const libsConfig = {
     new Set(DISCOVERY_PROVIDER_WHITELIST)
   ),
   identityServiceConfig: AudiusLibs.configIdentityService(IDENTITY_SERVICE),
-  isServer: true,
+  isServer: true
 }
 
 export default libsConfig

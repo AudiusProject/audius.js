@@ -41,11 +41,9 @@ export const identify = (userId: string) => {
 }
 
 export const recordPlayEvent = (trackId: ID, userId: string) => {
-  track(userId, {type: EventType.PLAYBACK_PLAY, id: `${trackId}`, source: SOURCE })
+  track(userId, { type: EventType.PLAYBACK_PLAY, id: `${trackId}`, source: SOURCE })
 }
 
 export const recordListenEvent = (trackId: ID, userId: string) => {
   track(userId, { type: EventType.LISTEN, id: `${trackId}`, source: SOURCE })
 }
-
-
