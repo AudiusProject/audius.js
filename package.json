@@ -2,6 +2,7 @@
   "name": "audius.js",
   "version": "0.0.1",
   "description": "Audius.js presents a simple, consumable API for interacting with the Audius network.",
+  "repository": "https://github.com/AudiusProject/audius.js",
   "author": "Audius Inc",
   "license": "ISC",
   "main": "dist/index.js",
@@ -22,17 +23,10 @@
   },
   "dependencies": {
     "@audius/libs": "^0.11.77",
-    "@discordjs/opus": "^0.2.1",
     "@types/btoa": "^1.2.3",
     "analytics-node": "^3.4.0-beta.1",
     "btoa": "^1.2.1",
-    "discord.js": "^12.2.0",
     "eventemitter3": "^4.0.0",
-    "express": "^4.17.1",
-    "ffmpeg": "0.0.4",
-    "ffmpeg-static": "^4.1.1",
-    "fluent-ffmpeg": "^2.1.2",
-    "hls.js": "^0.13.2",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
