@@ -1,16 +1,23 @@
 {
-  "name": "audius.js",
+  "name": "@audius/audius.js",
   "version": "0.0.1",
   "description": "Audius.js presents a simple, consumable API for interacting with the Audius network.",
-  "repository": "https://github.com/AudiusProject/audius.js",
-  "author": "Audius Inc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AudiusProject/audius.js"
+  },
+  "author": "Audius",
   "license": "Apache-2.0",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
   "module": "dist/index.es.js",
   "engines": {
-    "node": ">=8",
+    "node": ">=10.15.3",
     "npm": ">=5"
+  },
+  "homepage": "https://github.com/AudiusProject/audius.js",
+  "bugs": {
+    "url": "https://github.com/AudiusProject/audius.js/issues"
   },
   "scripts": {
     "test": "cross-env CI=1 react-scripts-ts test --env=jsdom",
