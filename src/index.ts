@@ -25,12 +25,6 @@ const LIBS_INIT = 'INITIALIZED'
  * Configuration options for `Audius` class constructor.
  */
 type AudiusConfig = {
-  /**
-   * Whether to record plays.
-   * If undefined, will be inferred from NODE_ENV, with
-   * recording only happening in production.
-   */
-  recordPlays?: boolean,
 
   /**
    * A descriptive ID representing this particular use of
@@ -55,7 +49,6 @@ type AudiusConfig = {
 class Audius {
   private libs: any
   private libsInitted: boolean
-  private recordPlays: boolean
   private libsEventEmitter: EventEmitter<string>
   private analyticsId: string
 
@@ -64,13 +57,11 @@ class Audius {
    * @param configuration options
    */
   constructor({
-    recordPlays,
     analyticsId
   }: AudiusConfig) {
     this.libs = new AudiusLibs(libsConfig)
     this.libsInitted = false
     this.libsEventEmitter = new EventEmitter<string>()
-    this.recordPlays = recordPlays || (process.env.NODE_ENV === 'production')
     this.analyticsId = analyticsId
 
     identify(analyticsId)
@@ -98,7 +89,7 @@ class Audius {
 
     await this.awaitLibsInit()
     try {
-      if (this.recordPlays) recordListenEvent(trackId, this.analyticsId)
+      recordListenEvent(trackId, this.analyticsId)
 
       const track = await tracks.get(this.libs, trackId)
       if (!track) throw new Error(`No track for ID: ${trackId}`)
@@ -109,10 +100,8 @@ class Audius {
       const gateways = user.creator_node_endpoint.split(',').map(e => `${e}/ipfs/`)
       const m3u8 = generateM3U8(track.track_segments, [], gateways[0])
 
-      if (this.recordPlays) {
-        this.recordListen(trackId)
-        recordPlayEvent(trackId, this.analyticsId)
-      }
+      this.recordListen(trackId)
+      recordPlayEvent(trackId, this.analyticsId)
 
       return this.encodeDataURI(m3u8)
     } catch (err) {
