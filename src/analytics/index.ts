@@ -29,11 +29,12 @@ type PlayEvent = {
 type AllEvents = ListenEvent | PlayEvent
 
 const track = (userId: string, event: AllEvents) => {
-  analytics.track({ userId, event: event.type, properties: _.omit(event, ['type']) }, (err) => {
-    console.log('callbackkkk')
-    if (err) {
-      console.log('got analytics error')
-      console.log(err.message)}
+  analytics.track({
+    userId,
+    event: event.type,
+    properties: _.omit(event, ['type'])
+  }, (err) => {
+    if (err) console.warn(`Analytics error: ${err.message}`)
   })
 }
 
@@ -46,7 +47,6 @@ export const recordPlayEvent = (trackId: ID, userId: string) => {
 }
 
 export const recordListenEvent = (trackId: ID, userId: string) => {
-  console.log('recording listen!')
   track(userId, { type: EventType.LISTEN, id: `${trackId}`, source: SOURCE })
 }
 

@@ -1,37 +1,64 @@
+/**
+ * Audius.js is a client for the Audius Music network.
+ * @packageDocumentation
+ */
+
 import { ID } from 'shared/types/common'
 import * as tracks from './tracks'
 import * as users from './users'
 
 import AudiusLibs from '@audius/libs'
-import { libsConfig } from 'libs'
+import libsConfig from 'libs/config'
 import EventEmitter from 'eventemitter3'
 import btoa from 'btoa'
+import TrackMetadata from 'types/TrackMetadata'
 import { generateM3U8, uuid } from 'shared/util'
 import { Track } from 'shared/types/track'
 import { recordPlayEvent, recordListenEvent, identify } from 'analytics'
 
+// btoa is required as a global
+// for Axios to work properly, due to
+// XMLHttpRequest exported from web3
+// causing axios to think we're in a browser environment.
+// @ts-ignore
+global.btoa = btoa
+
+/**
+ * @hidden
+ */
 const LIBS_INIT = 'INITIALIZED'
 
-type TrackMetadata = {
-  description: string,
-  genre: string
-  mood: string,
-  ownerId: number,
-  path: string
-  trackId: number
-  tags: string[]
-  repostCount: number
-  favoriteCount: number
-  releaseDate: Date
-}
-
+/**
+ * Configuration options for `Audius` class constructor.
+ */
 type AudiusConfig = {
+  /**
+   * Whether to record plays.
+   * If undefined, will be inferred from NODE_ENV, with
+   * recording only happening in production.
+   */
   recordPlays?: boolean,
+
+  /**
+   * A descriptive ID representing this particular use of
+   * Audius.js.
+   */
   analyticsId: string
 }
 
-// @ts-ignore
-global.btoa = btoa
+/**
+ * The `Audius` class is the entry point to interacting with the Audius
+ * music network.
+ *
+ * You should instantiate a single instance of this class.
+ *
+ * **Warning: All public methods for this class may throw! Handle with care.**
+ *
+ * @remark
+ * Many of the methods accept `trackIds`.
+ * `TrackIds` may be found by stripping off the trailing digits
+ * from an Audius track URL: e.g. "https://audius.co/lido/life-of-peder-part-one-11786" => 11786
+ */
 class Audius {
   private libs: any
   private libsInitted: boolean
@@ -39,6 +66,10 @@ class Audius {
   private libsEventEmitter: EventEmitter<string>
   private analyticsId: string
 
+  /**
+   * Constructs a new instance of an Audius client.
+   * @param configuration options
+   */
   constructor({
     recordPlays,
     analyticsId
@@ -48,7 +79,6 @@ class Audius {
     this.libsEventEmitter = new EventEmitter<string>()
     this.recordPlays = recordPlays || (process.env.NODE_ENV === 'production')
     this.analyticsId = analyticsId
-    console.log(this.recordPlays)
 
     identify(analyticsId)
 
@@ -56,15 +86,23 @@ class Audius {
     this.libs.init().then(() => {
       this.libsInitted = true
       this.libsEventEmitter.emit(LIBS_INIT)
-    }).catch((err: any) => {
-      console.log(`Got err initializing libs: [${err}]`)
-      // TODO: handle this unhappy path
+    }).catch((err: Error) => {
+      console.warn(`Got err initializing libs: [${err}]`)
+      throw new Error(err.message)
     })
   }
 
-  // TODO: rename this something better?
-  async getTrackManifest(trackId: ID) {
+  /**
+   * `getTrackDataURI` is the primary method through which to retrieve a streamable
+   * track from Audius.
+   *
+   * This method returns a playable HLS track manifest, base64 encoded in as a data URI.
+   *
+   * @param trackId
+   */
+  async getTrackDataURI(trackId: ID) {
     console.debug(`Getting manifest for track ID ${trackId}`)
+
     await this.awaitLibsInit()
     try {
       if (this.recordPlays) recordListenEvent(trackId, this.analyticsId)
@@ -90,6 +128,10 @@ class Audius {
     }
   }
 
+  /** `getTrackMetadata` returns metadata for a given track on the Audius network.
+   *
+   * @param trackId
+   */
   async getTrackMetadata(trackId: ID): Promise<TrackMetadata> {
     console.debug(`Getting track metadata for track ID: ${trackId}`)
     await this.awaitLibsInit()
