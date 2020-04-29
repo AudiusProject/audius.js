@@ -8,7 +8,6 @@ example/node_modules
 # builds
 build
 dist
-docs
 .rpt2_cache
 
 # misc
