@@ -4,7 +4,7 @@
   "description": "Audius.js presents a simple, consumable API for interacting with the Audius network.",
   "repository": "https://github.com/AudiusProject/audius.js",
   "author": "Audius Inc",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
   "module": "dist/index.es.js",
@@ -23,13 +23,13 @@
   },
   "dependencies": {
     "@audius/libs": "^0.11.77",
+    "@types/btoa": "^1.2.3",
     "analytics-node": "^3.4.0-beta.1",
     "btoa": "^1.2.1",
     "eventemitter3": "^4.0.0",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@types/btoa": "^1.2.3",
     "@rollup/plugin-json": "^4.0.3",
     "@rollup/plugin-node-resolve": "^7.1.3",
     "@types/analytics-node": "^3.1.3",
