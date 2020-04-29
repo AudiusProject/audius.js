@@ -1,5 +1,5 @@
-const Audius = require('../../dist/index.js')
-const ffmpeg = require('ffmpeg')
+const Audius = require('audius.js')
+const Analytics = require('analytics-node')
 
 const discordToken = "NzA0NDM1NzkzMjU0NDE2NTA0.XqdHEg.QIU5KiQh6Tj5beNOccQfknGQ_AY"
 const Discord = require('discord.js')
@@ -9,8 +9,7 @@ client.once('ready', () => {
   console.log('Bot is ready and logged in!')
 })
 
-
-const audius = new Audius({ recordPlays: true })
+const audius = new Audius({ recordPlays: true, analyticsId: "piazza-testing-id" })
 
 console.log('getitng metadata')
 audius.getTrackMetadata(10).then(t => {
@@ -30,7 +29,7 @@ client.on('message', async message => {
     if (!voiceChannel) return message.channel.send("U need to be in a voice channel bro")
     const connection = await voiceChannel.join()
     console.log('Got connection')
-    const manifest = await audius.getTrackManifest(46420)
+    const manifest = await audius.getTrackManifest(11786)
     console.log('Got manifest')
     const playing = connection.play(manifest)
     playing

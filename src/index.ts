@@ -8,6 +8,7 @@ import EventEmitter from 'eventemitter3'
 import btoa from 'btoa'
 import { generateM3U8, uuid } from 'shared/util'
 import { Track } from 'shared/types/track'
+import { recordPlayEvent, recordListenEvent, identify } from 'analytics'
 
 const LIBS_INIT = 'INITIALIZED'
 
@@ -25,25 +26,33 @@ type TrackMetadata = {
 }
 
 type AudiusConfig = {
-  recordPlays: boolean,
+  recordPlays?: boolean,
+  analyticsId: string
 }
+
+// @ts-ignore
+global.btoa = btoa
 class Audius {
   private libs: any
   private libsInitted: boolean
   private recordPlays: boolean
   private libsEventEmitter: EventEmitter<string>
+  private analyticsId: string
 
   constructor({
-    recordPlays
-  }: AudiusConfig = {
-    recordPlays: process.env.NODE_ENV === 'production'
-  }) {
+    recordPlays,
+    analyticsId
+  }: AudiusConfig) {
     this.libs = new AudiusLibs(libsConfig)
     this.libsInitted = false
     this.libsEventEmitter = new EventEmitter<string>()
-    this.recordPlays = recordPlays
+    this.recordPlays = recordPlays || (process.env.NODE_ENV === 'production')
+    this.analyticsId = analyticsId
     console.log(this.recordPlays)
 
+    identify(analyticsId)
+
+    // Init libs
     this.libs.init().then(() => {
       this.libsInitted = true
       this.libsEventEmitter.emit(LIBS_INIT)
@@ -53,10 +62,13 @@ class Audius {
     })
   }
 
+  // TODO: rename this something better?
   async getTrackManifest(trackId: ID) {
     console.debug(`Getting manifest for track ID ${trackId}`)
     await this.awaitLibsInit()
     try {
+      if (this.recordPlays) recordListenEvent(trackId, this.analyticsId)
+
       const track = await tracks.get(this.libs, trackId)
       if (!track) throw new Error(`No track for ID: ${trackId}`)
 
@@ -68,6 +80,7 @@ class Audius {
 
       if (this.recordPlays) {
         this.recordListen(trackId)
+        recordPlayEvent(trackId, this.analyticsId)
       }
 
       return this.encodeDataURI(m3u8)
