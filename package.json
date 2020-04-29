@@ -20,10 +20,9 @@
     "url": "https://github.com/AudiusProject/audius.js/issues"
   },
   "scripts": {
-    "test": "cross-env CI=1 react-scripts-ts test --env=jsdom",
-    "test:watch": "react-scripts-ts test --env=jsdom",
-    "build": "rollup -c",
-    "start": "rollup -c -w",
+    "test": "echo \"No test specified, better write some!\"",
+    "build": "npm run docs && rollup -c",
+    "start": "npm run docs && rollup -c -w",
     "docs": "typedoc",
     "lint": "./node_modules/.bin/eslint '**/*.ts*'",
     "lint-fix": "./node_modules/.bin/eslint '**/*.ts*' --fix"
