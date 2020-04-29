@@ -40,8 +40,12 @@
     "analytics-node": "^3.4.0-beta.1",
     "btoa": "^1.2.1",
     "eventemitter3": "^4.0.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "pre-commit": "^1.2.2"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "devDependencies": {
     "@rollup/plugin-json": "^4.0.3",
     "@rollup/plugin-node-resolve": "^7.1.3",
