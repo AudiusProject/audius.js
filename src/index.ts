@@ -5,7 +5,6 @@
 
 import { ID } from 'shared/types/common'
 import * as tracks from './tracks'
-import * as users from './users'
 
 import AudiusLibs from '@audius/libs'
 import libsConfig from 'libs/config'
@@ -77,14 +76,14 @@ class Audius {
   }
 
   /**
-   * `getTrackDataURI` is the primary method through which to retrieve a streamable
+   * `getAudioStreamURL` is the primary method through which to retrieve a streamable
    * track from Audius.
    *
    * This method returns a playable HLS track manifest, base64 encoded as a data URI.
    *
    * @param trackId
    */
-  async getTrackDataURI(trackId: ID) {
+  async getAudioStreamURL(trackId: ID) {
     console.debug(`Getting manifest for track ID ${trackId}`)
 
     await this.awaitLibsInit()
@@ -94,9 +93,7 @@ class Audius {
       const track = await tracks.get(this.libs, trackId)
       if (!track) throw new Error(`No track for ID: ${trackId}`)
 
-      const user = await users.get(this.libs, track.owner_id)
-      if (!user) throw new Error(`No user for ID: ${track.owner_id}`)
-
+      const { user } = track
       const gateways = user.creator_node_endpoint.split(',').map(e => `${e}/ipfs/`)
       const m3u8 = generateM3U8(track.track_segments, [], gateways[0])
 

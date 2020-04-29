@@ -13,6 +13,5 @@
   "hideGenerator": true,
   "excludePrivate": true,
   "stripInternal": true,
-  "excludeNotExported": true,
-  "entryPoint": "\"index\""
+  "excludeNotExported": true
 }
