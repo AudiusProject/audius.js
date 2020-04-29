@@ -12,6 +12,8 @@ Under the hood, `audius.js` leverages [Audius Libs](https://github.com/AudiusPro
 
 `Audius.js` currently supports streaming tracks and retrieving track metadata.
 
+[`Audius.js` is fully documented.](https://audiusproject.github.io/audius.js/)
+
 To stream a track, `Audius.js` provides an [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) manifest encoded in a [data-URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs). This URL should be consumable by clients that can stream HLS.
 
 
@@ -25,7 +27,7 @@ npm install @audius/audius.js
 # Usage
 
 ```
-const Audius = require('audius.js')
+const Audius = require('@audius/audius.js')
 
 // Create a new instance of the Audius client
 const audius = new Audius({

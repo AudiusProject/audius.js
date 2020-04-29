@@ -21,8 +21,8 @@
   },
   "scripts": {
     "test": "echo \"No test specified, better write some!\"",
-    "build": "rollup -c",
-    "start": "rollup -c -w",
+    "build": "npm run docs && rollup -c",
+    "start": "npm run docs && rollup -c -w",
     "docs": "typedoc",
     "lint": "./node_modules/.bin/eslint '**/*.ts*'",
     "lint-fix": "./node_modules/.bin/eslint '**/*.ts*' --fix"
