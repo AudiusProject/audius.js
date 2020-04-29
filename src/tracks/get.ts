@@ -1,6 +1,6 @@
 import { TrackID, Track } from '../shared/types/track'
 
-const get = async (libs: any, id: TrackID) => {
+const get = async (libs: any, id: TrackID): Promise<Track | undefined> => {
   const tracks: Track[] = await libs.discoveryProvider.getTracks(
     1, // Limit,
     0, // Ofset,
@@ -11,7 +11,6 @@ const get = async (libs: any, id: TrackID) => {
     null, // filterDeleted
     true // withUsers
   )
-  if (tracks.length === 0) return undefined
   return tracks[0]
 }
 

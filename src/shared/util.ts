@@ -78,7 +78,7 @@ export const generateM3U8Variants = (
       prefetchedSegments,
       gateway
     )
-    // return variant
+
     return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(variant)}`)
   })
 
@@ -97,7 +97,6 @@ export const generateM3U8Variants = (
   // NOTE: Safari requires a resource URL to have an extension, so passing a createObjectURL for a blob
   // will not work.
   return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(m3u8)}`)
-  // return m3u8
 }
 
 export const uuid = () => {

@@ -1,13 +1,11 @@
 import Analytics from 'analytics-node'
 import { ID } from 'shared/types/common'
-// TODO: why can't this thing import just omit?
 import _ from 'lodash'
 
 const SEGMENT_WRITE_KEY = '5TPGR7lqFqzVZ8D2qgB6curM9XlTr0n6'
 const SOURCE = 'audius.js'
 
-// TODO: remove flushAt
-const analytics = new Analytics(SEGMENT_WRITE_KEY, { flushAt: 1 })
+const analytics = new Analytics(SEGMENT_WRITE_KEY)
 
 enum EventType {
   PLAYBACK_PLAY = 'Playback: Play',

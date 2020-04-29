@@ -1,5 +1,5 @@
 /**
- * Audius.js is a client for the Audius Music network.
+ * Audius.js streaming client for the Audius Music network.
  * @packageDocumentation
  */
 
@@ -80,7 +80,7 @@ class Audius {
       this.libsInitted = true
       this.libsEventEmitter.emit(LIBS_INIT)
     }).catch((err: Error) => {
-      console.warn(`Got error initializing libs: [${err.message}]`)
+      console.error(`Got error initializing libs: [${err.message}]`)
       throw new Error(err.message)
     })
   }
@@ -89,7 +89,7 @@ class Audius {
    * `getTrackDataURI` is the primary method through which to retrieve a streamable
    * track from Audius.
    *
-   * This method returns a playable HLS track manifest, base64 encoded in as a data URI.
+   * This method returns a playable HLS track manifest, base64 encoded as a data URI.
    *
    * @param trackId
    */
@@ -116,7 +116,7 @@ class Audius {
 
       return this.encodeDataURI(m3u8)
     } catch (err) {
-      console.log(`Error getting track ID ${trackId}: ${err.message}`)
+      console.error(`Error getting track ID ${trackId}: ${err.message}`)
       throw err
     }
   }
