@@ -9,7 +9,7 @@ type TrackMetadata = {
   /**
    *  The description of the track. May be an empty string.
    */
-  description: string,
+  description: string
 
   /**
    *  The genre of the track.
@@ -19,12 +19,12 @@ type TrackMetadata = {
   /**
    * The mood of the track.
    */
-  mood: string,
+  mood: string
 
   /**
    * The ID of the uploading user.
    */
-  ownerId: number,
+  ownerId: number
 
   /**
    * The path of the track on the Audius network,

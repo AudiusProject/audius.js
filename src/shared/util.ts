@@ -7,13 +7,14 @@
 import { TrackSegment } from 'shared/types/track'
 import btoa from 'btoa'
 
-const FORMAT = `#EXTM3U`
-const VERSION = `#EXT-X-VERSION:3`
-const TARGET_DURATION = `#EXT-X-TARGETDURATION:`
-const MEDIA_SEQUENCE = `#EXT-X-MEDIA-SEQUENCE:0`
-const SEGMENT_HEADER = `#EXTINF:`
-const STREAM_VARIANT_65K = `#EXT-X-STREAM-INF:TYPE=AUDIO,BANDWIDTH=65000,CODECS="mp4a.40.2"`
-const ENDLIST = `#EXT-X-ENDLIST`
+const FORMAT = '#EXTM3U'
+const VERSION = '#EXT-X-VERSION:3'
+const TARGET_DURATION = '#EXT-X-TARGETDURATION:'
+const MEDIA_SEQUENCE = '#EXT-X-MEDIA-SEQUENCE:0'
+const SEGMENT_HEADER = '#EXTINF:'
+const STREAM_VARIANT_65K =
+  '#EXT-X-STREAM-INF:TYPE=AUDIO,BANDWIDTH=65000,CODECS="mp4a.40.2"'
+const ENDLIST = '#EXT-X-ENDLIST'
 
 const TARGET_DURATION_VALUE = 6
 
@@ -26,7 +27,7 @@ const TARGET_DURATION_VALUE = 6
 export const generateM3U8 = (
   segments: TrackSegment[],
   prefetchedSegments: string[] = [],
-  gateway?: string,
+  gateway?: string
 ) => {
   let targetDuration = TARGET_DURATION_VALUE
 
@@ -47,13 +48,10 @@ export const generateM3U8 = (
     segments.map((segment, i) => {
       const link = prefetchedSegments[i]
         ? prefetchedSegments[i]
-        // Write a CID directly to the manifest file so that the fragment
-        // loader can customizably fetch the CID.
         : `${gateway}${segment.multihash}`
-      return [
-        `${SEGMENT_HEADER}${segment.duration}`,
-        link
-      ].join('\n')
+      // Write a CID directly to the manifest file so that the fragment
+      // loader can customizably fetch the CID.
+      return [`${SEGMENT_HEADER}${segment.duration}`, link].join('\n')
     })
   )
 
@@ -73,19 +71,14 @@ export const generateM3U8Variants = (
   gateways?: string[]
 ) => {
   const variants = gateways.map(gateway => {
-    const variant = generateM3U8(
-      segments,
-      prefetchedSegments,
-      gateway
-    )
+    const variant = generateM3U8(segments, prefetchedSegments, gateway)
 
-    return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(variant)}`)
+    return encodeURI(
+      `data:application/vnd.apple.mpegURL;base64,${btoa(variant)}`
+    )
   })
 
-  const lines = [
-    FORMAT,
-    VERSION
-  ]
+  const lines = [FORMAT, VERSION]
 
   variants.forEach(variant => {
     lines.push(STREAM_VARIANT_65K)
@@ -101,9 +94,9 @@ export const generateM3U8Variants = (
 
 export const uuid = () => {
   // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/873856#873856
-  var s = []
-  var hexDigits = '0123456789abcdef'
-  for (var i = 0; i < 36; i++) {
+  const s = []
+  const hexDigits = '0123456789abcdef'
+  for (let i = 0; i < 36; i++) {
     s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
   }
   s[14] = '4' // bits 12-15 of the time_hi_and_version field to 0010
@@ -111,6 +104,6 @@ export const uuid = () => {
   s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
   s[8] = s[13] = s[18] = s[23] = '-'
 
-  var uuid = s.join('')
+  const uuid = s.join('')
   return uuid
 }

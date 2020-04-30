@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 export type ID = number
 
 export type CID = string
@@ -14,6 +15,6 @@ export type Timestamped = {
 }
 
 export type PlaylistID = ID
-export type Playlist = {
-  
-}
+export type Playlist = {}
+
+/* eslint-enable camelcase */

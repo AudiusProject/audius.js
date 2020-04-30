@@ -24,7 +24,6 @@ const LIBS_INIT = 'INITIALIZED'
  * Configuration options for `Audius` class constructor.
  */
 type AudiusConfig = {
-
   /**
    * A descriptive ID representing this particular use of
    * Audius.js.
@@ -55,9 +54,7 @@ class Audius {
    * Constructs a new instance of an Audius client.
    * @param configuration options
    */
-  constructor({
-    analyticsId
-  }: AudiusConfig) {
+  constructor({ analyticsId }: AudiusConfig) {
     this.libs = new AudiusLibs(libsConfig)
     this.libsInitted = false
     this.libsEventEmitter = new EventEmitter<string>()
@@ -66,13 +63,16 @@ class Audius {
     identify(analyticsId)
 
     // Init libs
-    this.libs.init().then(() => {
-      this.libsInitted = true
-      this.libsEventEmitter.emit(LIBS_INIT)
-    }).catch((err: Error) => {
-      console.error(`Got error initializing libs: [${err.message}]`)
-      throw new Error(err.message)
-    })
+    this.libs
+      .init()
+      .then(() => {
+        this.libsInitted = true
+        this.libsEventEmitter.emit(LIBS_INIT)
+      })
+      .catch((err: Error) => {
+        console.error(`Got error initializing libs: [${err.message}]`)
+        throw new Error(err.message)
+      })
   }
 
   /**
@@ -94,7 +94,9 @@ class Audius {
       if (!track) throw new Error(`No track for ID: ${trackId}`)
 
       const { user } = track
-      const gateways = user.creator_node_endpoint.split(',').map(e => `${e}/ipfs/`)
+      const gateways = user.creator_node_endpoint
+        .split(',')
+        .map(e => `${e}/ipfs/`)
       const m3u8 = generateM3U8(track.track_segments, [], gateways[0])
 
       this.recordListen(trackId)
@@ -120,7 +122,7 @@ class Audius {
 
       return {
         title: track.title,
-        description: track.description || "",
+        description: track.description || '',
         genre: track.genre,
         mood: track.mood,
         ownerId: track.owner_id,
@@ -145,19 +147,23 @@ class Audius {
     try {
       this.libs.Track.logTrackListen(trackId, uuid())
     } catch (err) {
-      console.warn(`Got err recording listen for track ID ${trackId}: [${err.message}]`)
+      console.warn(
+        `Got err recording listen for track ID ${trackId}: [${err.message}]`
+      )
     }
   }
 
   private async awaitLibsInit() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (this.libsInitted) resolve()
       this.libsEventEmitter.on(LIBS_INIT, resolve)
     })
   }
 
   private encodeDataURI(manifest: string) {
-    return encodeURI(`data:application/vnd.apple.mpegURL;base64,${btoa(manifest)}`)
+    return encodeURI(
+      `data:application/vnd.apple.mpegURL;base64,${btoa(manifest)}`
+    )
   }
 }
 
