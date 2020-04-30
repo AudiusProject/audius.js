@@ -7,6 +7,7 @@ module.exports = {
     'standard',
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
+    'prettier-standard',
   ],
   globals: {
     Atomics: 'readonly',
@@ -19,7 +20,8 @@ module.exports = {
   },
   plugins: [
     '@typescript-eslint',
-    'jest'
+    'jest',
+    'prettier'
   ],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -40,5 +42,6 @@ module.exports = {
     'arrow-parens': 'off',
     'padded-blocks': 'off',
 
+    'prettier/prettier': 'error',
   }
 }
