@@ -1,1 +1,1 @@
-declare module '@audius/libs';
+declare module '@audius/libs'

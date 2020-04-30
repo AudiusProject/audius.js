@@ -15,7 +15,7 @@ enum EventType {
 type BaseEvent = { source: string }
 
 type ListenEvent = {
-  type: EventType.LISTEN,
+  type: EventType.LISTEN
   id: string
 } & BaseEvent
 
@@ -27,13 +27,16 @@ type PlayEvent = {
 type AllEvents = ListenEvent | PlayEvent
 
 const track = (userId: string, event: AllEvents) => {
-  analytics.track({
-    userId,
-    event: event.type,
-    properties: _.omit(event, ['type'])
-  }, (err) => {
-    if (err) console.warn(`Analytics error: ${err.message}`)
-  })
+  analytics.track(
+    {
+      userId,
+      event: event.type,
+      properties: _.omit(event, ['type'])
+    },
+    err => {
+      if (err) console.warn(`Analytics error: ${err.message}`)
+    }
+  )
 }
 
 export const identify = (userId: string) => {
@@ -41,7 +44,11 @@ export const identify = (userId: string) => {
 }
 
 export const recordPlayEvent = (trackId: ID, userId: string) => {
-  track(userId, { type: EventType.PLAYBACK_PLAY, id: `${trackId}`, source: SOURCE })
+  track(userId, {
+    type: EventType.PLAYBACK_PLAY,
+    id: `${trackId}`,
+    source: SOURCE
+  })
 }
 
 export const recordListenEvent = (trackId: ID, userId: string) => {
