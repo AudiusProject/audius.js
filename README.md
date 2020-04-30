@@ -59,13 +59,25 @@ try {
 
 # Notes
 
+## TrackIds
 Many of the methods accept `trackIds`.
 `TrackIds` may be found by stripping off the trailing digits from an Audius track URL: e.g. `"https://audius.co/lido/life-of-peder-part-one-11786" => 11786`
 
-
-
 # Developing
 
+## Linting
+`Audius.js` uses [ESLint](https://eslint.org/) to lint as pre-commit hook. ESLint is configured with both [StandardJS](https://standardjs.com/) and [Prettier](https://prettier.io/) settings.
+
+**It's highly recommended to turn on auto-fixes on save in your editor of choice.**
+In VSCode, you can install the [ESLint Extension](https://github.com/microsoft/vscode-eslint), and then add the following code
+to your settings.json:
+```
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+```
+
+## Commands
 ```
 // Compile the lib in watch mode
 npm run start
