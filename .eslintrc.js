@@ -4,10 +4,10 @@ module.exports = {
     es6: true
   },
   extends: [
-    'standard',
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
     'prettier-standard',
+    'standard',
   ],
   globals: {
     Atomics: 'readonly',
@@ -41,6 +41,7 @@ module.exports = {
     'no-empty': 'off',
     'arrow-parens': 'off',
     'padded-blocks': 'off',
+    'space-before-function-paren': 'off',
 
     'prettier/prettier': 'error',
   }
