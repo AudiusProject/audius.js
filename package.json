@@ -1,6 +1,6 @@
 {
   "name": "@audius/audius.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Audius.js presents a simple, consumable API for interacting with the Audius network.",
   "repository": {
     "type": "git",
