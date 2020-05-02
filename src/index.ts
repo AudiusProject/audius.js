@@ -49,7 +49,6 @@ class Audius {
   private libsInitted: boolean
   private libsEventEmitter: EventEmitter<string>
   private analyticsId: string
-
   /**
    * Constructs a new instance of an Audius client.
    * @param configuration options
