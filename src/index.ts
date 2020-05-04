@@ -12,7 +12,6 @@ import EventEmitter from 'eventemitter3'
 import btoa from 'btoa'
 import TrackMetadata from 'types/TrackMetadata'
 import { generateM3U8, uuid } from 'shared/util'
-import { Track } from 'shared/types/track'
 import { recordPlayEvent, recordListenEvent, identify } from 'analytics'
 
 /**
@@ -80,6 +79,8 @@ class Audius {
    *
    * This method returns a playable HLS track manifest, base64 encoded as a data URI.
    *
+   * Will throw if passed a trackId pointing to a non-existent, deleted, or hidden track.
+   *
    * @param trackId
    */
   async getAudioStreamURL(trackId: ID) {
@@ -90,7 +91,9 @@ class Audius {
       recordListenEvent(trackId, this.analyticsId)
 
       const track = await tracks.get(this.libs, trackId)
-      if (!track) throw new Error(`No track for ID: ${trackId}`)
+      if (!track || track.is_delete) {
+        throw new Error(`No track for ID: ${trackId}`)
+      }
 
       const { user } = track
       const gateways = user.creator_node_endpoint
@@ -110,14 +113,19 @@ class Audius {
 
   /** `getTrackMetadata` returns metadata for a given track on the Audius network.
    *
+   * Will throw if passed a trackId pointing to a non-existent, deleted, or hidden track.
+   *
    * @param trackId
    */
   async getTrackMetadata(trackId: ID): Promise<TrackMetadata> {
     console.debug(`Getting track metadata for track ID: ${trackId}`)
     await this.awaitLibsInit()
     try {
-      const track: Track = await tracks.get(this.libs, trackId)
-      if (!track) throw new Error(`No track found for ID ${trackId}`)
+      const track = await tracks.get(this.libs, trackId)
+
+      if (!track || track.is_delete) {
+        throw new Error(`No track found for ID ${trackId}`)
+      }
 
       return {
         title: track.title,

@@ -32,6 +32,7 @@ export type Track = OnChain &
     file_type: string | null
     genre: string
     has_current_user_reposted: boolean
+    is_delete: boolean
     is_current: boolean
     download: Download | null
     length: number | null
