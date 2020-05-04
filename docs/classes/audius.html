@@ -2803,7 +2803,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/AudiusProject/blueberry/blob/941c377/src/index.ts#L51">index.ts:51</a></li>
+								<li>Defined in <a href="https://github.com/AudiusProject/blueberry/blob/69d5e5d/src/index.ts#L50">index.ts:50</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2839,7 +2839,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/AudiusProject/blueberry/blob/941c377/src/index.ts#L86">index.ts:86</a></li>
+								<li>Defined in <a href="https://github.com/AudiusProject/blueberry/blob/69d5e5d/src/index.ts#L86">index.ts:86</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2848,6 +2848,7 @@ img {
 								track from Audius.</p>
 							</div>
 							<p>This method returns a playable HLS track manifest, base64 encoded as a data URI.</p>
+							<p>Will throw if passed a trackId pointing to a non-existent, deleted, or hidden track.</p>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
@@ -2871,13 +2872,14 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/AudiusProject/blueberry/blob/941c377/src/index.ts#L116">index.ts:116</a></li>
+								<li>Defined in <a href="https://github.com/AudiusProject/blueberry/blob/69d5e5d/src/index.ts#L120">index.ts:120</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
 								<p><code>getTrackMetadata</code> returns metadata for a given track on the Audius network.</p>
 							</div>
+							<p>Will throw if passed a trackId pointing to a non-existent, deleted, or hidden track.</p>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
