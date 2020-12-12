@@ -30,12 +30,13 @@
     "test": "echo \"No test specified, better write some!\"",
     "build": "npm run docs && rollup -c",
     "start": "rollup -c -w",
+    "typecheck": "tsc -w",
     "docs": "typedoc",
     "lint": "./node_modules/.bin/eslint 'src/**/*.ts*'",
     "lint-fix": "./node_modules/.bin/eslint 'src/**/*.ts*' --fix"
   },
   "dependencies": {
-    "@audius/libs": "0.11.79",
+    "@audius/libs": "1.1.0",
     "@types/btoa": "^1.2.3",
     "analytics-node": "^3.4.0-beta.1",
     "btoa": "^1.2.1",
@@ -88,7 +89,7 @@
     "ts-jest": "^22.4.2",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "typedoc": "^0.17.0-3",
-    "typescript": "^3.8.3"
+    "typescript": "^4.1.2"
   },
   "files": [
     "dist"

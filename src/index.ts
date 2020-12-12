@@ -1,13 +1,12 @@
 import btoa from 'btoa'
-import { isRight } from 'fp-ts/lib/Either'
 import {
   getUserFollowsResource,
   GetUserFollowsArgs,
-  GetUserFollowsOptions,
-  Resource,
-  QueryParams
+  GetUserFollowsOptions
 } from 'resources/GetUserFollowers'
-import fetch from 'node-fetch'
+import { RESTClient } from './core/RESTClient'
+import AudiusLibs from '@audius/libs'
+import makeLibsConfig from './libs/config'
 
 // Minor hack alert:
 // `btoa` is required as a global
@@ -17,127 +16,98 @@ import fetch from 'node-fetch'
 // @ts-ignore
 global.btoa = btoa
 
-/**
- * Handles selecting discovery providers, reselecting, etc
- */
-class DiscoveryNodeManager {
-  init() {}
-  getEndpoint() {
-    // TODO: make this autoselect
-    return 'https://discoveryprovider.audius.co'
-  }
-}
+class UserRoutes {
+  _restClient: RESTClient
 
-type Result<R, E extends Error> = (R & { error: null }) | { error: E }
-
-type Nullable<T> = T | null
-
-const success = <R, E extends Error>(result: R) => ({
-  ...result,
-  error: null as E
-})
-const error = <E extends Error>(error: E) => ({ error })
-
-const ENDPOINT_PREFIXES = {
-  full: 'v1/full',
-  regular: 'v1'
-}
-
-/**
- * Handles making requests, retries, debouncing, etc
- */
-class RESTClient {
-  host: string
-  currentUserId: string
-
-  constructor({
-    host,
-    currentUserId
-  }: {
-    host: string
-    currentUserId: Nullable<string>
-  }) {
-    this.host = host
-    // TODO: this needs to be nullable
-    this.currentUserId = currentUserId
+  constructor(restClient: RESTClient) {
+    this._restClient = restClient
   }
 
-  async makeRequest<Args, Options, Output>(
-    args: Args,
-    options: Options,
-    resource: Resource<Args, Options, Output>
-    /* TODO - add retries here */
-  ): Promise<Result<Output, any>> {
-    const query = resource.queryBuilder(args, options, this.currentUserId)
-    const endpoint = this._constructUrl(
-      query.path,
-      query.queryParams,
-      resource.isFull
-    )
-    console.log({ endpoint })
-    const res = await fetch(endpoint)
-    const json = await res.json()
-    const decoded = resource.decoder.decode(json)
-    if (isRight(decoded)) {
-      return success(decoded.right)
-    } else {
-      console.log('Got error!')
-      console.log('Error: ' + JSON.stringify(decoded.left))
-      // TODO: handle multiple errors!
-      return error(new Error(decoded.left[0].message))
-    }
-  }
-
-  _constructUrl(path: string, params: QueryParams, isFull: boolean) {
-    const queryString = Object.entries(params)
-      .filter(p => p[1] !== undefined && p[1] !== null)
-      .map(p => {
-        if (Array.isArray(p[1])) {
-          return p[1].map(val => `${p[0]}=${encodeURIComponent(val)}`).join('&')
-        }
-        return `${p[0]}=${encodeURIComponent(p[1]!)}`
-      })
-      .join('&')
-    const prefix = isFull ? ENDPOINT_PREFIXES.full : ENDPOINT_PREFIXES.regular
-    return `${this.host}/${prefix}/${path}${
-      queryString ? `?${queryString}` : ''
-    }`
-  }
-}
-
-const userRoutes = (client: RESTClient) => ({
-  getFollowers: async (
+  async getFollowers(
     args: GetUserFollowsArgs,
     options: GetUserFollowsOptions = {}
-  ) => {
+  ) {
     const resource = getUserFollowsResource
-    return client.makeRequest(args, options, resource)
+    return this._restClient.makeRequest(args, options, resource)
   }
-})
+}
+
+type AudiusArgs = {
+  libs?: AudiusLibs
+  initialDiscoveryNode?: string
+}
 
 /**
  * Top level class, orchestrates managers responsible
  * for performing more specific operations
  */
 class Audius {
-  discoveryNodeManager: DiscoveryNodeManager = null
-  restClient: RESTClient = null
-  Users: ReturnType<typeof userRoutes> = null /* TODO: need to type this */
+  _restClient: RESTClient
+  _libs: AudiusLibs
 
-  constructor() {
-    this.discoveryNodeManager = new DiscoveryNodeManager()
-    this.restClient = new RESTClient({
-      host: 'https://discoveryprovider.audius.co',
-      currentUserId: null
+  Users: UserRoutes
+
+  constructor({ libs, initialDiscoveryNode }: AudiusArgs = {}) {
+    this._restClient = new RESTClient({
+      host: initialDiscoveryNode
     })
-    this.discoveryNodeManager.init()
-    this.Users = userRoutes(this.restClient)
+    this.Users = new UserRoutes(this._restClient)
+
+    if (libs) {
+      // If injected libs, need to get the
+      // current DP endpoint, and monkeypatch the selection
+      // callback :/
+      this._libs = libs
+      const currentHost = libs.discoveryProvider.discoveryProviderEndpoint
+      const selectionCallback = (endpoint: string) => {
+        this._setNewEndpoint(endpoint)
+        libs.discoveryProvider.serviceSelector.selectionCallback(endpoint)
+      }
+      libs.discoveryProvider.serviceSelector.selectionCallback = selectionCallback
+      this._restClient.setHost(currentHost)
+    } else {
+      // Create libs as necessary
+      const config = makeLibsConfig(this._setNewEndpoint)
+      this._libs = new AudiusLibs(config)
+    }
+  }
+
+  async init() {
+    console.log('initting')
+    await this._initLibs()
+    // TODO: what if the libs you passed in as already initted? We good?
+  }
+
+  async _initLibs() {
+    await this._libs.init()
+  }
+
+  _setNewEndpoint = (endpoint: string) => {
+    this._restClient.setHost(endpoint)
   }
 }
 
 export default Audius
 
+// TODO:
+// handle currentUserId
+// retries
+// errors
+// cosmetic - host vs endpoint?
+// .env for lib vars?
+// - should response.data be optional? rn it is, seems like it should be...
+// To test:
+//  - does injecting your own libs + monkeypatching actually work?
+
 const a = new Audius()
+a.init().then(() => {
+  console.log('initted!')
+})
+
 a.Users.getFollowers({ userId: 'nVvkb' }).then(res => {
-  console.log({ res })
+  if (res.error) {
+    console.log({ error: res.error })
+  } else {
+    console.log({ data: res.data })
+  }
 })
