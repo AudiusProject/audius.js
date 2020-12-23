@@ -49,11 +49,6 @@ export class RESTClient {
     }
   }
 
-  // setHost(host: string) {
-  //   this._host = host
-  //   this._setHostEmitter.emit(SET_HOST_EVENT)
-  // }
-
   async _awaitLibsInit(): Promise<void> {
     // If we're already initted, immediately return
     if (this._libsInitializationState === 'initialized') return
@@ -113,7 +108,7 @@ export class RESTClient {
         true /* retry */,
         false /* shouldUnnestData */
       )
-      // TODO: handle this !data case!
+      // TODO: possible handle this case? investigate
       // if (!data) return null
       json = data
     }
