@@ -1,8 +1,11 @@
 import { Resource, QueryParams } from '../resources/Resource'
 import { isRight } from 'fp-ts/lib/Either'
-import fetch from 'node-fetch'
+import fetch, { Response } from 'node-fetch'
 import { Result, successResult, errorResult } from '../types/Result'
 import EventEmitter from 'eventemitter3'
+import { ConnectionError, UnknownError } from '../core/Errors'
+import { LibsInitializationState } from 'index'
+import AudiusLibs from '@audius/libs'
 
 const SET_HOST_EVENT = 'SET_HOST'
 
@@ -18,18 +21,26 @@ export class RESTClient {
   _host?: string
   _currentUserId?: string
   _setHostEmitter: EventEmitter
+  libsInitializationState: LibsInitializationState
+  _libs: AudiusLibs
 
   constructor({
     host,
-    currentUserId
+    currentUserId,
+    libsInitializationState,
+    libs
   }: {
     host?: string
     currentUserId?: string
-  } = {}) {
+    libsInitializationState: LibsInitializationState
+    libs: AudiusLibs
+  }) {
     this._host = host
-    // TODO: this needs to be nullable
     this._currentUserId = currentUserId
     this._setHostEmitter = new EventEmitter()
+    this._libs = libs
+
+    this.libsInitializationState = libsInitializationState
   }
 
   setHost(host: string) {
@@ -58,26 +69,72 @@ export class RESTClient {
     options: Options,
     resource: Resource<Args, Options, Output>
   ): Promise<Result<Output, Error>> {
-    const host = await this._getHost()
     const query = resource.queryBuilder(args, options, this._currentUserId)
-    const endpoint = this._constructUrl(
-      host,
-      query.path,
-      query.queryParams,
-      resource.isFull
-    )
-    console.log({ endpoint })
-    const res = await fetch(endpoint)
-    const json = await res.json()
+
+    // const data = await window.audiusLibs.discoveryProvider._makeRequest(
+    //   {
+    //     endpoint: this._formatPath(path),
+    //     queryParams: params
+    //   },
+    //   retry
+    // )
+    // if (!data) return null
+    // // TODO: Type boundaries of API
+    // return { data } as any
+
+    let json: any
+    if (this.libsInitializationState === 'uninitialized') {
+      const host = await this._getHost()
+      const endpoint = this._constructUrl(
+        host,
+        query.path,
+        query.queryParams,
+        resource.isFull
+      )
+      let res: Response
+      try {
+        console.debug('Calling via fetch route')
+        res = await fetch(endpoint)
+      } catch (e) {
+        return errorResult(
+          new ConnectionError({
+            message: `Cannot connect to server: ${endpoint}`
+          })
+        )
+      }
+      json = await res.json()
+      if (!res.ok) {
+        const error = resource.errorBuilder(res.status, json)
+        return errorResult(error)
+      }
+    } else {
+      // TODO: what does libs actually return?
+      console.debug('Calling via libs route')
+      const path = this._formatPath(query.path, resource.isFull)
+      const data = await this._libs.discoveryProvider._makeRequest(
+        {
+          endpoint: path,
+          queryParams: query.queryParams
+        },
+        true /* retry */,
+        false /* shouldUnnestData */
+      )
+      // TODO: handle this !data case!
+      // if (!data) return null
+      json = data
+    }
     const decoded = resource.responseType.decode(json)
     if (isRight(decoded)) {
       return successResult(decoded.right)
     } else {
-      console.log('Got error!')
-      console.log('Error: ' + JSON.stringify(decoded.left))
-      // TODO: handle multiple errors!
-      return errorResult(new Error(decoded.left[0].message))
+      return errorResult(
+        new UnknownError({ message: 'An encoding error has occurred' })
+      )
     }
+  }
+
+  _formatPath(path: string, isFull: boolean) {
+    return `/v1${isFull ? '/full' : ''}/${path}`
   }
 
   _constructUrl(

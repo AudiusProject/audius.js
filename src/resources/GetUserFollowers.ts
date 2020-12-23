@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import { VersionMetadata } from '../models/Common'
 import { User } from '../models/Users'
-import { Resource } from './Resource'
+import { defaultErrorHandler, Resource } from './Resource'
 
 // Request Types
 
@@ -43,5 +43,6 @@ export const getUserFollowsResource: Resource<
       offset: options.offset
     }
   }),
-  isFull: true
+  isFull: true,
+  errorBuilder: defaultErrorHandler
 }

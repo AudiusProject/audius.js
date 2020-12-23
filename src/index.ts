@@ -37,6 +37,8 @@ type AudiusArgs = {
   initialDiscoveryNode?: string
 }
 
+export type LibsInitializationState = 'initialized' | 'uninitialized'
+
 /**
  * Top level class, orchestrates managers responsible
  * for performing more specific operations
@@ -44,14 +46,12 @@ type AudiusArgs = {
 class Audius {
   _restClient: RESTClient
   _libs: AudiusLibs
+  _libsInitializationState: LibsInitializationState
 
   Users: UserRoutes
 
   constructor({ libs, initialDiscoveryNode }: AudiusArgs = {}) {
-    this._restClient = new RESTClient({
-      host: initialDiscoveryNode
-    })
-    this.Users = new UserRoutes(this._restClient)
+    this._libsInitializationState = 'uninitialized'
 
     if (libs) {
       // If injected libs, need to get the
@@ -70,11 +70,20 @@ class Audius {
       const config = makeLibsConfig(this._setNewEndpoint)
       this._libs = new AudiusLibs(config)
     }
+
+    this._restClient = new RESTClient({
+      host: initialDiscoveryNode,
+      libsInitializationState: 'uninitialized',
+      libs: this._libs
+    })
+    this.Users = new UserRoutes(this._restClient)
   }
 
   async init() {
     console.log('initting')
     await this._initLibs()
+    this._libsInitializationState = 'initialized'
+    this._restClient.libsInitializationState = 'initialized'
     // TODO: what if the libs you passed in as already initted? We good?
   }
 
@@ -95,19 +104,31 @@ export default Audius
 // errors
 // cosmetic - host vs endpoint?
 // .env for lib vars?
-// - should response.data be optional? rn it is, seems like it should be...
+// - should response.data be optional? rn it is, seems like it shouldn't be...
 // To test:
 //  - does injecting your own libs + monkeypatching actually work?
 
-const a = new Audius()
+const a = new Audius({
+  initialDiscoveryNode: 'https://discoveryprovider.audius.co'
+})
 a.init().then(() => {
   console.log('initted!')
+  setTimeout(() => {
+    a.Users.getFollowers({ userId: 'nVvkb' }).then(res => {
+      if (res.error) {
+        console.log({ error: res.error })
+      } else {
+        console.log('GOT LIBS DATA!')
+        // console.log({ data: res.data![0] })
+      }
+    })
+  }, 5000)
 })
-
 a.Users.getFollowers({ userId: 'nVvkb' }).then(res => {
   if (res.error) {
-    console.log({ error: res.error })
+    console.log(res.error)
   } else {
-    console.log({ data: res.data })
+    console.log('GOT FETCH DATA!')
+    // console.log({ data: res.data![0] })
   }
 })
