@@ -10,9 +10,7 @@ const WEB3_REGISTRY_ADDRESS = '0xC611C82150b56E6e4Ec5973AcAbA8835Dd0d75A2'
 const WEB3_PROVIDER_URLS =
   'https://poa-gateway.audius.co,https://core.poa.network'
 
-const makeLibsConfig = (
-  discoveryNodeSelectionCallback: (node: string) => void
-) => ({
+const makeLibsConfig = () => ({
   ethWeb3Config: AudiusLibs.configEthWeb3(
     ETH_TOKEN_ADDRESS,
     ETH_REGISTRY_ADDRESS,
@@ -25,8 +23,7 @@ const makeLibsConfig = (
   ),
   discoveryProviderConfig: AudiusLibs.configDiscoveryProvider(
     null /* whitelist */,
-    null /* reslectTimeout */,
-    discoveryNodeSelectionCallback /* selectionCallback */
+    null /* reslectTimeout */
   ),
   identityServiceConfig: AudiusLibs.configIdentityService(IDENTITY_SERVICE),
   /* TODO: not always isServer */

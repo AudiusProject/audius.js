@@ -7,7 +7,7 @@ import { ConnectionError, UnknownError } from '../core/Errors'
 import { LibsInitializationState } from 'index'
 import AudiusLibs from '@audius/libs'
 
-const SET_HOST_EVENT = 'SET_HOST'
+const LIBS_INIT_EVENT = 'LIBS_INITTED'
 
 const ENDPOINT_PREFIXES = {
   full: 'v1/full',
@@ -20,8 +20,8 @@ const ENDPOINT_PREFIXES = {
 export class RESTClient {
   _host?: string
   _currentUserId?: string
-  _setHostEmitter: EventEmitter
-  libsInitializationState: LibsInitializationState
+  _libsInitializedEmitter: EventEmitter
+  _libsInitializationState: LibsInitializationState
   _libs: AudiusLibs
 
   constructor({
@@ -37,30 +37,35 @@ export class RESTClient {
   }) {
     this._host = host
     this._currentUserId = currentUserId
-    this._setHostEmitter = new EventEmitter()
+    this._libsInitializedEmitter = new EventEmitter()
     this._libs = libs
-
-    this.libsInitializationState = libsInitializationState
+    this._libsInitializationState = libsInitializationState
   }
 
-  setHost(host: string) {
-    this._host = host
-    this._setHostEmitter.emit(SET_HOST_EVENT)
+  setLibsInitializationState(state: LibsInitializationState) {
+    this._libsInitializationState = state
+    if (state === 'initialized') {
+      this._libsInitializedEmitter.emit(state)
+    }
   }
 
-  async _getHost(): Promise<string> {
-    if (this._host) return this._host
+  // setHost(host: string) {
+  //   this._host = host
+  //   this._setHostEmitter.emit(SET_HOST_EVENT)
+  // }
+
+  async _awaitLibsInit(): Promise<void> {
+    // If we're already initted, immediately return
+    if (this._libsInitializationState === 'initialized') return
+
+    // Otherwise, return when we get emitted init event
     return new Promise(resolve => {
-      console.debug('Called endpoint without host, waiting for selection')
       const listener = () => {
-        const host = this._host
-        if (host) {
-          this._setHostEmitter.removeListener(SET_HOST_EVENT, listener)
-          console.debug(`Resolving request with host: ${host}`)
-          resolve(host)
-        }
+        this._libsInitializedEmitter.removeListener(LIBS_INIT_EVENT, listener)
+        console.debug('Libs initted!')
+        resolve()
       }
-      this._setHostEmitter.addListener(SET_HOST_EVENT, listener)
+      this._libsInitializedEmitter.addListener(LIBS_INIT_EVENT, listener)
     })
   }
 
@@ -71,22 +76,10 @@ export class RESTClient {
   ): Promise<Result<Output, Error>> {
     const query = resource.queryBuilder(args, options, this._currentUserId)
 
-    // const data = await window.audiusLibs.discoveryProvider._makeRequest(
-    //   {
-    //     endpoint: this._formatPath(path),
-    //     queryParams: params
-    //   },
-    //   retry
-    // )
-    // if (!data) return null
-    // // TODO: Type boundaries of API
-    // return { data } as any
-
     let json: any
-    if (this.libsInitializationState === 'uninitialized') {
-      const host = await this._getHost()
+    if (this._libsInitializationState === 'uninitialized' && this._host) {
       const endpoint = this._constructUrl(
-        host,
+        this._host,
         query.path,
         query.queryParams,
         resource.isFull
@@ -108,8 +101,9 @@ export class RESTClient {
         return errorResult(error)
       }
     } else {
-      // TODO: what does libs actually return?
+      // Otherwise, await libs init
       console.debug('Calling via libs route')
+      await this._awaitLibsInit()
       const path = this._formatPath(query.path, resource.isFull)
       const data = await this._libs.discoveryProvider._makeRequest(
         {
