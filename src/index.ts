@@ -51,7 +51,14 @@ class Audius {
 
   async init() {
     console.log('initting')
-    await this._initLibs()
+    // If you bring your own libs to the table
+    // we presume you know what you're doing and we won't
+    // init libs for you.
+    // You must init your instance of libs
+    // before initting AudiusClient!
+    if (!this._libs.userStateManager) {
+      await this._initLibs()
+    }
     this._libsInitializationState = 'initialized'
     this._restClient.setLibsInitializationState('initialized')
   }
@@ -64,25 +71,25 @@ class Audius {
 export default Audius
 
 // 'EXAMPLE' running it:
-const a = new Audius({
-  initialDiscoveryNode: 'https://discoveryprovider.audius.co'
-})
+// const a = new Audius({
+//   initialDiscoveryNode: 'https://discoveryprovider.audius.co'
+// })
 
-a.init().then(() => {
-  console.log('initted!')
-  a.Users.getFollowers({ userId: 'nVvkb' }).then(res => {
-    if (res.error) {
-      console.log({ error: res.error })
-    } else {
-      console.log('GOT LIBS DATA!')
-    }
-  })
-})
+// a.init().then(() => {
+//   console.log('initted!')
+//   a.Users.getFollowers({ userId: 'nVvkb' }).then(res => {
+//     if (res.error) {
+//       console.log({ error: res.error })
+//     } else {
+//       console.log('GOT LIBS DATA!')
+//     }
+//   })
+// })
 
-a.Users.getFollowers({ userId: 'nVvkb' }).then(res => {
-  if (res.error) {
-    console.log(res.error)
-  } else {
-    console.log('GOT FETCH DATA!')
-  }
-})
+// a.Users.getFollowers({ userId: 'nVvkb' }).then(res => {
+//   if (res.error) {
+//     console.log(res.error)
+//   } else {
+//     console.log('GOT FETCH DATA!')
+//   }
+// })
