@@ -1,8 +1,8 @@
-import Analytics from 'analytics-node'
+// import Analytics from 'analytics-node'
 
-const SEGMENT_WRITE_KEY = '5TPGR7lqFqzVZ8D2qgB6curM9XlTr0n6'
+// const SEGMENT_WRITE_KEY = '5TPGR7lqFqzVZ8D2qgB6curM9XlTr0n6'
 
-const analytics = new Analytics(SEGMENT_WRITE_KEY)
+// const analytics = new Analytics(SEGMENT_WRITE_KEY)
 
 // Tracking looks like:
 // analytics.track(
@@ -15,6 +15,6 @@ const analytics = new Analytics(SEGMENT_WRITE_KEY)
 //     if (err) console.warn(`Analytics error: ${err.message}`)
 //   }
 
-export const identify = (userId: string) => {
-  analytics.identify({ userId })
-}
+// export const identify = (userId: string) => {
+//   analytics.identify({ userId })
+// }

@@ -14,10 +14,10 @@ export default {
     {
       file: pkg.main,
       format: 'cjs',
-      sourcemap: true,
+      sourcemap: true
     }
   ],
-  globals: { 'btoa': 'btoa' },
+  globals: { btoa: 'btoa' },
   external: ['@audius/libs', 'analytics-node', 'btoa'],
   plugins: [
     external(),
@@ -29,6 +29,6 @@ export default {
       typescript
     }),
     resolve(),
-    commonjs(),
+    commonjs()
   ]
 }
