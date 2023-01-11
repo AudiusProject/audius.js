@@ -35,7 +35,7 @@
     "lint-fix": "./node_modules/.bin/eslint 'src/**/*.ts*' --fix"
   },
   "dependencies": {
-    "@audius/libs": "0.11.79",
+    "@audius/libs": "0.11.82",
     "@types/btoa": "^1.2.3",
     "analytics-node": "^3.4.0-beta.1",
     "btoa": "^1.2.1",
